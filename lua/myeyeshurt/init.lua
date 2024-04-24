@@ -158,7 +158,7 @@ local function setup(userOpts)
   })
 
   if config.debug then
-    print("eyes.nvim setup with config: ", vim.inspect(config))
+    print("myeyeshurt setup with config: ", vim.inspect(config))
   end
 end
 
