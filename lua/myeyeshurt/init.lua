@@ -135,7 +135,7 @@ local function setup(userOpts)
   config = vim.tbl_deep_extend("force", defaults, userOpts)
 
   if config.debug then
-    print("eyes.nvim setup with config: ", vim.inspect(config))
+    print("myeyeshurt setup with config: ", vim.inspect(config))
   end
 end
 
