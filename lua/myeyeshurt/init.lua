@@ -9,6 +9,7 @@ local defaults = {
   flakeOdds = 20,
   maxFlakes = 750,
   nextFrameDelay = 175,
+  useDefaultKeymaps = true,
   debug = false,
   flake = {'*', '.'}
 }
@@ -130,9 +131,31 @@ local function startFlakes()
   flakeEventLoop()
 end
 
+local function setDefaultKeymaps()
+  vim.keymap.set("n", "<leader>ms", function() startFlakes() end, {noremap = true, silent = true})
+  vim.keymap.set("n", "<leader>mx", function() stopFlakes() end, {noremap = true, silent = true})
+end
+
+local function onSave()
+  local entry = {}
+  entry.version = 1
+  entry.time = os.time()
+
+  print("myeyeshurt: ", vim.inspect(entry))
+end
+
 local function setup(userOpts)
   userOpts = userOpts or {}
   config = vim.tbl_deep_extend("force", defaults, userOpts)
+
+  if config.useDefaultKeymaps then
+    setDefaultKeymaps()
+  end
+
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = "*",
+    callback = onSave
+  })
 
   if config.debug then
     print("eyes.nvim setup with config: ", vim.inspect(config))
