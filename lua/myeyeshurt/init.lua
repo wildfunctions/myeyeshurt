@@ -1,3 +1,7 @@
+local state = require("myeyeshurt.state")
+local utils = require("myeyeshurt.utils")
+local configFile = string.format("%s/myeyeshurt.json", vim.fn.stdpath("data"))
+
 local winWidth = vim.api.nvim_get_option("columns")
 local winHeight = vim.api.nvim_get_option("lines")
 
@@ -11,7 +15,8 @@ local defaults = {
   nextFrameDelay = 175,
   useDefaultKeymaps = true,
   debug = false,
-  flake = {'*', '.'}
+  flake = {'*', '.'},
+  minutesUntilRest = 20
 }
 local config = {}
 
@@ -137,11 +142,27 @@ local function setDefaultKeymaps()
 end
 
 local function onSave()
-  local entry = {}
-  entry.version = 1
-  entry.time = os.time()
+  local mehConfig = utils.readJsonFile(configFile)
+  if mehConfig == nil then
+    mehConfig = state.newEntryObject()
+  end
 
-  print("myeyeshurt: ", vim.inspect(entry))
+  local delta = os.time() - mehConfig.last_updated
+  local secondsUntilRest = config.minutesUntilRest * 60
+
+  if(delta < secondsUntilRest) then
+    mehConfig.duration = mehConfig.duration + delta
+  elseif delta >= secondsUntilRest + 60 * 5 then
+    mehConfig.duration = 0
+  end
+
+  if mehConfig.duration >= secondsUntilRest then
+    startFlakes()
+    mehConfig.duration = 0
+  end
+
+  mehConfig.last_updated = os.time()
+  utils.writeJsonFile(configFile, mehConfig)
 end
 
 local function setup(userOpts)
