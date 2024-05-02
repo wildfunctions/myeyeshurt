@@ -2,6 +2,17 @@
 
 ![alt text](https://github.com/wildfunctions/images/blob/main/myeyeshurt.gif)
 
+## About the Plugin 
+
+The 20-20-20 rule suggests taking a break every 20 minutes to focus your eyes on something
+at least 20 feat away, for at least 20 seconds.
+
+With this plugin, ASCII snowflakes begin to fall across your screen once you've been active for 
+20 minutes, reminding you to take a much-needed break. Initially, a few snowflakes appear, 
+but as time continues without a break, their number grows into a blizzard compelling 
+you to pause and rest your eyes.
+
+
 ## Installation
 
 * install using [lazy.nvim](https://github.com/folke/lazy.nvim)
