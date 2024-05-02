@@ -47,7 +47,7 @@ you to pause and rest your eyes.
 
 These are the default keymaps:
 ```
-<leader>ms : triggers flakes 
+<leader>ms : trigger flakes (this happens automatically, but it's fun to manually trigger)
 <leader>mx : stop flakes 
 ```
 
