@@ -119,6 +119,7 @@ local function flakeEventLoop()
 end
 
 local function stopFlakes()
+  -- TODO: timer should actually start here
   if canvasWin ~= nil and vim.api.nvim_win_is_valid(canvasWin) then
     vim.api.nvim_win_close(canvasWin, true)
     canvasWin = nil
@@ -131,6 +132,7 @@ local function stopFlakes()
 end
 
 local function startFlakes()
+  -- TODO: need local state for isSnowing
   createFlakeCanvas()
   initializeFlakes()
   flakeEventLoop()
@@ -144,6 +146,7 @@ end
 local function stillInNeovim(_state, delta)
   local secondsUntilRest = config.minutesUntilRest * 60
 
+  -- assume programmers save work at least every 5 minutes
   local maxDeltaSeconds = 5 * 60
   if(delta > maxDeltaSeconds) then
     return false
