@@ -1,22 +1,16 @@
-local Path = require("plenary.path")
-
-local function isFileInFolder(file, folder)
-  local filePath = Path:new(file):absolute()
-  local folderPath = Path:new(folder):absolute()
-
-  local sub = filePath:sub(1, #folderPath)
-  return sub == tostring(folderPath)
+local function readJsonFile(filePath)
+  local file = io.open(filePath, "r")
+  if not file then return nil end
+  local content = file:read("*a")
+  file:close()
+  return vim.json.decode(content)
 end
 
-local function readJsonFile(file)
-  local filePath = Path:new(file)
-  if filePath:exists() then
-    return vim.json.decode(filePath:read())
-  end
-end
-
-local function writeJsonFile(file, data)
-  Path:new(file):write(vim.json.encode(data), 'w')
+local function writeJsonFile(filePath, data)
+  local file = io.open(filePath, "w")
+  if not file then return nil end
+  file:write(vim.json.encode(data))
+  file:close()
 end
 
 local function shallowClone(original)
@@ -28,7 +22,6 @@ local function shallowClone(original)
 end
 
 return {
-  isFileInFolder = isFileInFolder,
   readJsonFile = readJsonFile,
   writeJsonFile = writeJsonFile,
   shallowClone = shallowClone

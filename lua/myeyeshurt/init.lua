@@ -1,6 +1,6 @@
 local state = require("myeyeshurt.state")
 local utils = require("myeyeshurt.utils")
-local configFile = string.format("%s/myeyeshurt.json", vim.fn.stdpath("data"))
+local stateFile = string.format("%s/myeyeshurt.json", vim.fn.stdpath("data"))
 
 local winWidth = vim.api.nvim_get_option("columns")
 local winHeight = vim.api.nvim_get_option("lines")
@@ -141,28 +141,50 @@ local function setDefaultKeymaps()
   vim.keymap.set("n", "<leader>mx", function() stopFlakes() end, {noremap = true, silent = true})
 end
 
-local function onSave()
-  local mehConfig = utils.readJsonFile(configFile)
-  if mehConfig == nil then
-    mehConfig = state.newEntryObject()
-  end
-
-  local delta = os.time() - mehConfig.last_updated
+local function stillInNeovim(_state, delta)
   local secondsUntilRest = config.minutesUntilRest * 60
 
-  if(delta < secondsUntilRest) then
-    mehConfig.duration = mehConfig.duration + delta
-  elseif delta >= secondsUntilRest + 60 * 5 then
-    mehConfig.duration = 0
+  local maxDeltaSeconds = 5 * 60
+  if(delta > maxDeltaSeconds) then
+    return false
+  elseif (_state.duration + delta) >= (secondsUntilRest + maxDeltaSeconds) then
+    return false
   end
 
-  if mehConfig.duration >= secondsUntilRest then
+  return true
+end
+
+local function getNewState(_state, currentTime)
+  local delta = currentTime - _state.last_updated
+  local secondsUntilRest = config.minutesUntilRest * 60
+  local shouldStartFlakes = false
+
+  if stillInNeovim(_state, delta) then
+    _state.duration = _state.duration + delta
+    if _state.duration > secondsUntilRest then
+      shouldStartFlakes = true
+      _state.duration = 0
+    end
+  else
+    _state.duration = 0
+  end
+
+  _state.last_updated = currentTime
+
+  return _state, shouldStartFlakes
+end
+
+local function onSave()
+  local lastKnownState = utils.readJsonFile(stateFile)
+  if lastKnownState == nil then
+    lastKnownState = state.newState(os.time())
+  end
+
+  local newState, shouldStartFlakes = getNewState(lastKnownState, os.time())
+  if shouldStartFlakes then
     startFlakes()
-    mehConfig.duration = 0
   end
-
-  mehConfig.last_updated = os.time()
-  utils.writeJsonFile(configFile, mehConfig)
+  utils.writeJsonFile(stateFile, newState)
 end
 
 local function setup(userOpts)
@@ -187,4 +209,7 @@ return {
   setup = setup,
   stop = stopFlakes,
   start = startFlakes,
+
+  stillInNeovim = stillInNeovim,
+  getNewState = getNewState
 }

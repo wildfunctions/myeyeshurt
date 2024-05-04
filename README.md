@@ -8,7 +8,6 @@
 ```lua
 {
     "wildfunctions/myeyeshurt",
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {}
 }
 ```
@@ -19,7 +18,6 @@
 ```lua
 {
     "wildfunctions/myeyeshurt",
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       initialFlakes = 1,
       flakeOdds = 20,
