@@ -19,7 +19,6 @@ you to pause and rest your eyes.
 ```lua
 {
     "wildfunctions/myeyeshurt",
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {}
 }
 ```
@@ -30,7 +29,6 @@ you to pause and rest your eyes.
 ```lua
 {
     "wildfunctions/myeyeshurt",
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       initialFlakes = 1,
       flakeOdds = 20,

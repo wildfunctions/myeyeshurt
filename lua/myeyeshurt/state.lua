@@ -1,15 +1,13 @@
-local isFileInFolder = require("myeyeshurt.utils").isFileInFolder
-
-local function newEntryObject()
-  local entry = {
+local function newState(currentTime)
+  local state = {
     version = 1,
     duration = 0,
-    last_updated = os.time()
+    last_updated = currentTime
   }
 
-  return entry
+  return state
 end
 
 return {
-  newEntryObject = newEntryObject
+  newState = newState
 }
